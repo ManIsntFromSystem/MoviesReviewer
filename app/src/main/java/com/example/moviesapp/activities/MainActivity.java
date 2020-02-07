@@ -5,6 +5,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.ImageView;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -30,11 +34,16 @@ public class MainActivity extends AppCompatActivity {
     private MovieAdapter movieAdapter;
     private ArrayList<Movie> movies;
     private RequestQueue requestQueue;
+    private ImageView searchImgView;
+    private EditText searchNameField;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        searchImgView = findViewById(R.id.imageViewSearch);
+        searchNameField = findViewById(R.id.editNameMovie);
 
         recyclerView = findViewById(R.id.recyclerViewMovies);
         recyclerView.hasFixedSize();
@@ -43,12 +52,13 @@ public class MainActivity extends AppCompatActivity {
         movies = new ArrayList<>();
         requestQueue = Volley.newRequestQueue(this);
 
-        getMovies();
+        getMovies("John");
 
     }
 
-    private void getMovies() {
-        String url = "http://www.omdbapi.com/?apikey=93de5337&s=john";
+    private void getMovies(String nameMovie) {
+        String url = "http://www.omdbapi.com/?apikey=93de5337&s=" + nameMovie;
+        Log.d("UrlMovie", "URL: " + url);
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
                 Request.Method.GET, url, null,
@@ -80,5 +90,11 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }, Throwable::printStackTrace);
         requestQueue.add(jsonObjectRequest);
+    }
+
+    public void searchImageView(View view) {
+        //String nameMovie = searchNameField.getText().toString();
+        movies.clear();
+        getMovies(searchNameField.getText().toString());
     }
 }
